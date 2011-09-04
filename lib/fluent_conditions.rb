@@ -18,6 +18,11 @@ module FluentConditions
             add_boolean(field)
             self
           end
+
+          define_method("#{field}?") do
+            add_boolean(field)
+            true?
+          end
         end
       end
     end
@@ -28,13 +33,6 @@ module FluentConditions
     def initialize(object)
       @object = object
       @values = []
-    end
-
-    def true?
-      @values.each do |val|
-        return false unless val
-      end
-      true
     end
 
     def or
@@ -55,6 +53,13 @@ module FluentConditions
       else
         @values << @object.send(field)
       end
+    end
+
+    def true?
+      @values.each do |val|
+        return false unless val
+      end
+      true
     end
 
   end
