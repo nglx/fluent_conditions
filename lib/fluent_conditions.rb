@@ -10,26 +10,15 @@ module FluentConditions
     end
 
     base.instance_eval do
-      def fluent(arg)
+      def fluent(field)
         builder = class_variable_get(:@@builder)
 
         builder.class_eval do
-          define_method(arg) do
-            obj = instance_variable_get(:@object)
-            or_flag = instance_variable_get(:@or_flag)
-            values = instance_variable_get(:@values)
-
-            if or_flag
-              values[-1] = values.last || obj.send(arg)
-              instance_variable_set(:@or_flag, false)
-            else
-              values << obj.send(arg)
-            end
-
+          define_method(field) do
+            add_boolean(field)
             self
           end
         end
-
       end
     end
 
@@ -56,6 +45,18 @@ module FluentConditions
     def and
       self
     end
+
+    private
+
+    def add_boolean(field)
+      if @or_flag
+        @values[-1] = @values.last || @object.send(field)
+        @or_flag = false
+      else
+        @values << @object.send(field)
+      end
+    end
+
   end
 end
 
