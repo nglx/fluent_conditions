@@ -49,91 +49,98 @@ module FluentConditions
         @obj.admin = nil
         @obj.is.admin?.should be_false
       end
-
-      describe "more than one condition" do
-        before(:each) do
-          clazz = Class.new do
-            include FluentConditions
-            attr_accessor :good, :bad
-            fluent :good
-            fluent :bad
-          end
-          @obj = clazz.new
-        end
-
-        it "should check two true conditions" do
-          @obj.good = true
-          @obj.bad = true
-          @obj.is.good.bad?.should be_true
-        end
-
-        it "should check two true/false conditions" do
-          @obj.good = true
-          @obj.bad = false
-          @obj.is.good.bad?.should be_false
-        end
-
-        it "should check two false conditions" do
-          @obj.good = false
-          @obj.bad = false
-          @obj.is.good.bad?.should be_false
-        end
-
-        describe "with or" do
-          it "should check two true conditions" do
-            @obj.good = true
-            @obj.bad = true
-            @obj.is.good.or.bad?.should be_true
-          end
-
-          it "should check two true/false conditions" do
-            @obj.good = true
-            @obj.bad = false
-            @obj.is.good.or.bad?.should be_true
-          end
-
-          it "should check two false conditions" do
-            @obj.good = false
-            @obj.bad = false
-            @obj.is.good.or.bad?.should be_false
-          end
-
-          describe "complex conditions" do
-            before(:each) do
-              clazz = Class.new do
-                include FluentConditions
-                attr_accessor :good, :bad, :ugly
-                fluent :good
-                fluent :bad
-                fluent :ugly
-              end
-              @obj = clazz.new
-            end
-
-            it "should pass them all" do
-              @obj.good = true
-              @obj.bad = false
-              @obj.ugly = true
-
-              @obj.is.good.bad.or.ugly?.should be_true
-              @obj.is.good.or.bad.and.ugly?.should be_true
-              @obj.is.good.ugly.or.bad?.should be_true
-
-              @obj.is.bad.and.good.or.ugly?.should be_false
-              @obj.is.bad.ugly.or.good?.should be_false
-              @obj.is.bad.or.good.and.ugly?.should be_true
-
-              @obj.is.ugly.or.good.and.bad?.should be_false
-              @obj.is.ugly.good.and.bad?.should be_false
-              @obj.is.ugly.good.or.bad?.should be_true
-            end
-          end
-        end
-
-      end
-
     end
 
+    describe "more than one condition" do
+      before(:each) do
+        clazz = Class.new do
+          include FluentConditions
+          attr_accessor :good, :bad
+          fluent :good
+          fluent :bad
+        end
+        @obj = clazz.new
+      end
+
+      it "should check two true conditions" do
+        @obj.good = true
+        @obj.bad = true
+        @obj.is.good.bad?.should be_true
+      end
+
+      it "should check two true/false conditions" do
+        @obj.good = true
+        @obj.bad = false
+        @obj.is.good.bad?.should be_false
+      end
+
+      it "should check two false conditions" do
+        @obj.good = false
+        @obj.bad = false
+        @obj.is.good.bad?.should be_false
+      end
+    end
+
+    describe "with or" do
+      before(:each) do
+        clazz = Class.new do
+          include FluentConditions
+          attr_accessor :good, :bad
+          fluent :good
+          fluent :bad
+        end
+        @obj = clazz.new
+      end
+
+      it "should check two true conditions" do
+        @obj.good = true
+        @obj.bad = true
+        @obj.is.good.or.bad?.should be_true
+      end
+
+      it "should check two true/false conditions" do
+        @obj.good = true
+        @obj.bad = false
+        @obj.is.good.or.bad?.should be_true
+      end
+
+      it "should check two false conditions" do
+        @obj.good = false
+        @obj.bad = false
+        @obj.is.good.or.bad?.should be_false
+      end
+    end
+
+    describe "complex conditions" do
+      before(:each) do
+        clazz = Class.new do
+          include FluentConditions
+          attr_accessor :good, :bad, :ugly
+          fluent :good
+          fluent :bad
+          fluent :ugly
+        end
+        @obj = clazz.new
+      end
+
+      it "should pass them all" do
+        @obj.good = true
+        @obj.bad = false
+        @obj.ugly = true
+
+        @obj.is.good.bad.or.ugly?.should be_true
+        @obj.is.good.or.bad.and.ugly?.should be_true
+        @obj.is.good.ugly.or.bad?.should be_true
+
+        @obj.is.bad.and.good.or.ugly?.should be_false
+        @obj.is.bad.ugly.or.good?.should be_false
+        @obj.is.bad.or.good.and.ugly?.should be_true
+
+        @obj.is.ugly.or.good.and.bad?.should be_false
+        @obj.is.ugly.good.and.bad?.should be_false
+        @obj.is.ugly.good.or.bad?.should be_true
+      end
+    end
   end
 
 end
