@@ -49,6 +49,11 @@ module FluentConditions
         @obj.admin = nil
         @obj.is.admin?.should be_false
       end
+
+      it "should check negative condition" do
+        @obj.admin = false
+        @obj.is_not.admin?.should be_true
+      end
     end
 
     describe "more than one condition" do
@@ -139,6 +144,8 @@ module FluentConditions
         @obj.is.ugly.or.good.and.bad?.should be_false
         @obj.is.ugly.good.and.bad?.should be_false
         @obj.is.ugly.good.or.bad?.should be_true
+
+        @obj.is_not.good.bad.and.ugly?.should be_true
       end
     end
   end

@@ -5,7 +5,11 @@ module FluentConditions
 
     base.class_eval do
       def is
-        @@builder.new(self)
+        @@builder.new(self, :positive)
+      end
+
+      def is_not
+        @@builder.new(self, :negative)
       end
     end
 
@@ -21,7 +25,7 @@ module FluentConditions
 
           define_method("#{field}?") do
             add_boolean(field)
-            true?
+            calculate
           end
         end
       end
@@ -30,9 +34,10 @@ module FluentConditions
   end
 
   class Builder
-    def initialize(object)
+    def initialize(object, type)
       @object = object
       @values = []
+      @type = type
     end
 
     def or
@@ -55,11 +60,20 @@ module FluentConditions
       end
     end
 
+    def calculate
+      return true? if @type == :positive
+      return false? if @type == :negative
+    end
+
     def true?
       @values.each do |val|
         return false unless val
       end
       true
+    end
+
+    def false?
+      not true?
     end
 
   end
