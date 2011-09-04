@@ -16,7 +16,16 @@ module FluentConditions
         builder.class_eval do
           define_method(arg) do
             obj = instance_variable_get(:@object)
-            instance_variable_get(:@values) << obj.send(arg)
+            or_flag = instance_variable_get(:@or_flag)
+            values = instance_variable_get(:@values)
+
+            if or_flag
+              values[-1] = values.last || obj.send(arg)
+              instance_variable_set(:@or_flag, false)
+            else
+              values << obj.send(arg)
+            end
+
             self
           end
         end
@@ -37,6 +46,11 @@ module FluentConditions
         return false unless val
       end
       true
+    end
+
+    def or
+      @or_flag = true
+      self
     end
 
     def and

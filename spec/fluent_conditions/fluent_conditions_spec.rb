@@ -3,7 +3,7 @@ require 'spec_helper'
 module FluentConditions
 
   describe Builder do
-    
+
     describe "when module indluded" do
       before(:each) do
         clazz = Class.new do
@@ -60,7 +60,7 @@ module FluentConditions
           end
           @obj = clazz.new
         end
-        
+
         it "should check two true conditions" do
           @obj.good = true
           @obj.bad = true
@@ -79,8 +79,61 @@ module FluentConditions
           @obj.is.good.bad.true?.should be_false
         end
 
+        describe "with or" do
+          it "should check two true conditions" do
+            @obj.good = true
+            @obj.bad = true
+            @obj.is.good.or.bad.true?.should be_true
+          end
+
+          it "should check two true/false conditions" do
+            @obj.good = true
+            @obj.bad = false
+            @obj.is.good.or.bad.true?.should be_true
+          end
+
+          it "should check two false conditions" do
+            @obj.good = false
+            @obj.bad = false
+            @obj.is.good.or.bad.true?.should be_false
+          end
+
+          describe "complex conditions" do
+            before(:each) do
+              clazz = Class.new do
+                include FluentConditions
+                attr_accessor :good, :bad, :ugly
+                fluent :good
+                fluent :bad
+                fluent :ugly
+              end
+              @obj = clazz.new
+            end
+
+            it "should pass them all" do
+              @obj.good = true
+              @obj.bad = false
+              @obj.ugly = true
+
+              @obj.is.good.bad.or.ugly.true?.should be_true
+              @obj.is.good.or.bad.and.ugly.true?.should be_true
+              @obj.is.good.ugly.or.bad.true?.should be_true
+
+              @obj.is.bad.and.good.or.ugly.true?.should be_false
+              @obj.is.bad.ugly.or.good.true?.should be_false
+              @obj.is.bad.or.good.and.ugly.true?.should be_true
+
+              @obj.is.ugly.or.good.and.bad.true?.should be_false
+              @obj.is.ugly.good.and.bad.true?.should be_false
+              @obj.is.ugly.good.or.bad.true?.should be_true
+            end
+          end
+        end
+
       end
+
     end
 
   end
+
 end
