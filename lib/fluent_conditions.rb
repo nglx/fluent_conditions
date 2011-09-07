@@ -1,15 +1,15 @@
 module FluentConditions
 
   def self.included(base)
-    base.class_variable_set(:@@builder, Builder)
+    base.class_variable_set(:@@builder, Class.new(Builder))
 
     base.class_eval do
       def is
-        @@builder.new(self, :positive)
+        self.class.class_variable_get(:@@builder).new(self, :positive)
       end
 
       def is_not
-        @@builder.new(self, :negative)
+        self.class.class_variable_get(:@@builder).new(self, :negative)
       end
     end
 
