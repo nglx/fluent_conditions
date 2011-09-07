@@ -1,21 +1,21 @@
 module FluentConditions
 
   def self.included(base)
-    base.class_variable_set(:@@builder, Class.new(Builder))
+    base.instance_variable_set(:@builder, Class.new(Builder))
 
     base.class_eval do
       def is
-        self.class.class_variable_get(:@@builder).new(self, :positive)
+        self.class.instance_variable_get(:@builder).new(self, :positive)
       end
 
       def is_not
-        self.class.class_variable_get(:@@builder).new(self, :negative)
+        self.class.instance_variable_get(:@builder).new(self, :negative)
       end
     end
 
     base.instance_eval do
       def fluent(field)
-        builder = class_variable_get(:@@builder)
+        builder = instance_variable_get(:@builder)
 
         builder.class_eval do
           define_method(field) do

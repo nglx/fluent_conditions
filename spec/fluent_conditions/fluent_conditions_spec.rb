@@ -27,13 +27,6 @@ module FluentConditions
 
     describe "when included to different classes" do
       before(:each) do
-        class Color
-          include FluentConditions
-          attr_accessor :blue
-          fluent :blue
-        end
-        @color = Color.new
-
         class User
           include FluentConditions
           attr_accessor :admin
@@ -42,13 +35,44 @@ module FluentConditions
         @user = User.new
       end
 
-      it "should provide builders of different classes" do
-        @user.is.class.should_not == @color.is.class
+      describe "not in hierarchy" do
+        before(:each) do
+          class Color
+            include FluentConditions
+            attr_accessor :blue
+            fluent :blue
+          end
+          @color = Color.new
+        end
+
+        it "should provide builders of different classes" do
+          @user.is.class.should_not == @color.is.class
+        end
+
+        it "should not respond to other's builder accessors" do
+          @user.is.should_not respond_to(:blue)
+          @color.is.should_not respond_to(:admin)
+        end
       end
 
-      it "should not respond to other's builder accessors" do
-        @user.is.should_not respond_to(:blue)
-        @color.is.should_not respond_to(:admin)
+      describe "in hierarchy" do
+        before(:each) do
+          class Employee < User
+            include FluentConditions
+            attr_accessor :manager
+            fluent :manager
+          end
+          @employee = Employee.new
+        end
+
+        it "should provide builders of different classes" do
+          @user.is.class.should_not == @employee.is.class
+        end
+
+        it "should not respond to other's builder accessors" do
+          @user.is.should_not respond_to(:manager)
+          @employee.is.should_not respond_to(:admin)
+        end
       end
     end
 
