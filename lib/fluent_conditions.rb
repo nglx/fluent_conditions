@@ -20,27 +20,27 @@ module FluentConditions
         fields.each do |field|
           builder.class_eval do
             define_method(field) do
-              current_value = instance_variable_get(:@object).send(field)
-              add_boolean(current_value)
+              field_value = instance_variable_get(:@object).send(field)
+              add_boolean(field_value)
               self
             end
 
             define_method("#{field}?") do
-              current_value = instance_variable_get(:@object).send(field)
-              add_boolean(current_value)
-              calculate_result
+              field_value = instance_variable_get(:@object).send(field)
+              add_boolean(field_value)
+              end_result
             end
 
             define_method("not_#{field}") do
-              current_value = !instance_variable_get(:@object).send(field)
-              add_boolean(current_value)
+              field_value = !instance_variable_get(:@object).send(field)
+              add_boolean(field_value)
               self
             end
 
             define_method("not_#{field}?") do
-              current_value = !instance_variable_get(:@object).send(field)
-              add_boolean(current_value)
-              calculate_result
+              field_value = !instance_variable_get(:@object).send(field)
+              add_boolean(field_value)
+              end_result
             end
           end
         end
@@ -52,8 +52,8 @@ module FluentConditions
   class Builder
     def initialize(object, type)
       @object = object
-      @values = []
       @type = type
+      @previous, @current = true, true
     end
 
     def or
@@ -67,29 +67,22 @@ module FluentConditions
 
     private
 
-    def add_boolean(current_value)
+    def add_boolean(field_value)
       if @or_flag
-        @values[-1] = @values.last || current_value
+        @current = @current || field_value
         @or_flag = false
       else
-        @values << current_value
+        @previous, @current = @current, field_value
       end
     end
 
-    def calculate_result
-      return true? if @type == :positive
-      return false? if @type == :negative
+    def end_result
+      return result if @type == :positive
+      return !result if @type == :negative
     end
 
-    def true?
-      @values.each do |val|
-        return false unless val
-      end
-      true
-    end
-
-    def false?
-      not true?
+    def result
+      @previous && @current 
     end
 
   end
