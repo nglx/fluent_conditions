@@ -121,8 +121,7 @@ module FluentConditions
         clazz = Class.new do
           include FluentConditions
           attr_accessor :good, :bad
-          fluent :good
-          fluent :bad
+          fluent :good, :bad
         end
         @obj = clazz.new
       end
@@ -151,8 +150,7 @@ module FluentConditions
         clazz = Class.new do
           include FluentConditions
           attr_accessor :good, :bad
-          fluent :good
-          fluent :bad
+          fluent :good, :bad
         end
         @obj = clazz.new
       end
@@ -181,9 +179,7 @@ module FluentConditions
         clazz = Class.new do
           include FluentConditions
           attr_accessor :good, :bad, :ugly
-          fluent :good
-          fluent :bad
-          fluent :ugly
+          fluent :good, :bad, :ugly
         end
         @obj = clazz.new
       end

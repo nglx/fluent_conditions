@@ -14,32 +14,34 @@ module FluentConditions
     end
 
     base.instance_eval do
-      def fluent(field)
+      def fluent(*fields)
         builder = instance_variable_get(:@builder)
 
-        builder.class_eval do
-          define_method(field) do
-            current_value = instance_variable_get(:@object).send(field)
-            add_boolean(current_value)
-            self
-          end
+        fields.each do |field|
+          builder.class_eval do
+            define_method(field) do
+              current_value = instance_variable_get(:@object).send(field)
+              add_boolean(current_value)
+              self
+            end
 
-          define_method("#{field}?") do
-            current_value = instance_variable_get(:@object).send(field)
-            add_boolean(current_value)
-            calculate_result
-          end
+            define_method("#{field}?") do
+              current_value = instance_variable_get(:@object).send(field)
+              add_boolean(current_value)
+              calculate_result
+            end
 
-          define_method("not_#{field}") do
-            current_value = !instance_variable_get(:@object).send(field)
-            add_boolean(current_value)
-            self
-          end
+            define_method("not_#{field}") do
+              current_value = !instance_variable_get(:@object).send(field)
+              add_boolean(current_value)
+              self
+            end
 
-          define_method("not_#{field}?") do
-            current_value = !instance_variable_get(:@object).send(field)
-            add_boolean(current_value)
-            calculate_result
+            define_method("not_#{field}?") do
+              current_value = !instance_variable_get(:@object).send(field)
+              add_boolean(current_value)
+              calculate_result
+            end
           end
         end
       end
