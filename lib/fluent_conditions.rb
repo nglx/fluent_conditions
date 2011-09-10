@@ -45,6 +45,26 @@ module FluentConditions
           end
         end
       end
+
+      def fluent_values(field, values)
+        builder = instance_variable_get(:@builder)
+
+        values.each do |value|
+          builder.class_eval do
+            define_method(value) do
+              field_value = instance_variable_get(:@object).send(field) == value
+              add_boolean(field_value)
+              self
+            end
+
+            define_method("#{value}?") do
+              field_value = instance_variable_get(:@object).send(field) == value
+              add_boolean(field_value)
+              end_result
+            end
+          end
+        end
+      end
     end
 
   end

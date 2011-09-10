@@ -204,6 +204,34 @@ module FluentConditions
         @obj.is_not.good.bad.and.ugly?.should be_true
       end
     end
+
+    describe "parametrized" do
+      before(:each) do
+        clazz = Class.new do
+          include FluentConditions
+          attr_accessor :color
+          fluent_values :color, [:red, :green]
+        end
+        @product = clazz.new
+      end
+
+      it "should respond to accesor methods" do
+        @product.is.should respond_to(:red)
+        @product.is.should respond_to(:green)
+
+        @product.is.should respond_to(:red?)
+        @product.is.should respond_to(:green?)
+      end
+
+      it "should check value by param" do
+        @product.color = :red
+
+        @product.is.red?.should be_true
+        @product.is.green?.should be_false
+        @product.is.red.and.green?.should be_false
+        @product.is.red.or.green?.should be_true
+      end
+    end
   end
 
 end
