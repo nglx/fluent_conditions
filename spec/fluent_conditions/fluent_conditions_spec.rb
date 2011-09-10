@@ -230,6 +230,9 @@ module FluentConditions
         @product.is.green?.should be_false
         @product.is.red.and.green?.should be_false
         @product.is.red.or.green?.should be_true
+
+        @product.is.not_red?.should be_false
+        @product.is.not_green?.should be_true
       end
     end
   end

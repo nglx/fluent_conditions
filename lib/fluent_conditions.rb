@@ -50,6 +50,14 @@ module FluentConditions
             define_method("#{value}?") do
               update_and_finish(instance_variable_get(:@object).send(field) == value)
             end
+
+            define_method("not_#{value}") do
+              update_and_continue(instance_variable_get(:@object).send(field) != value)
+            end
+
+            define_method("not_#{value}?") do
+              update_and_finish(instance_variable_get(:@object).send(field) != value)
+            end
           end
         end
       end
