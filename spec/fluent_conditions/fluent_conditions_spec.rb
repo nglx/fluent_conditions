@@ -218,9 +218,13 @@ module FluentConditions
       it "should respond to accesor methods" do
         @product.is.should respond_to(:red)
         @product.is.should respond_to(:green)
+        @product.is.should respond_to(:not_red)
+        @product.is.should respond_to(:not_green)
 
         @product.is.should respond_to(:red?)
         @product.is.should respond_to(:green?)
+        @product.is.should respond_to(:not_red?)
+        @product.is.should respond_to(:not_green?)
       end
 
       it "should check value by param" do
