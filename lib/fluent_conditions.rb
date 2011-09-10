@@ -20,27 +20,19 @@ module FluentConditions
         fields.each do |field|
           builder.class_eval do
             define_method(field) do
-              field_value = instance_variable_get(:@object).send(field)
-              add_boolean(field_value)
-              self
+              update_and_continue(instance_variable_get(:@object).send(field))
             end
 
             define_method("#{field}?") do
-              field_value = instance_variable_get(:@object).send(field)
-              add_boolean(field_value)
-              end_result
+              update_and_finish(instance_variable_get(:@object).send(field))
             end
 
             define_method("not_#{field}") do
-              field_value = !instance_variable_get(:@object).send(field)
-              add_boolean(field_value)
-              self
+              update_and_continue(!instance_variable_get(:@object).send(field))
             end
 
             define_method("not_#{field}?") do
-              field_value = !instance_variable_get(:@object).send(field)
-              add_boolean(field_value)
-              end_result
+              update_and_finish(!instance_variable_get(:@object).send(field))
             end
           end
         end
@@ -52,15 +44,11 @@ module FluentConditions
         values.each do |value|
           builder.class_eval do
             define_method(value) do
-              field_value = instance_variable_get(:@object).send(field) == value
-              add_boolean(field_value)
-              self
+              update_and_continue(instance_variable_get(:@object).send(field) == value)
             end
 
             define_method("#{value}?") do
-              field_value = instance_variable_get(:@object).send(field) == value
-              add_boolean(field_value)
-              end_result
+              update_and_finish(instance_variable_get(:@object).send(field) == value)
             end
           end
         end
@@ -87,7 +75,17 @@ module FluentConditions
 
     private
 
-    def add_boolean(field_value)
+    def update_and_continue(field_value)
+      update_result(field_value)
+      self
+    end
+
+    def update_and_finish(field_value)
+      update_result(field_value)
+      end_result
+    end
+
+    def update_result(field_value)
       if @or_flag
         @current = @current || field_value
         @or_flag = false
