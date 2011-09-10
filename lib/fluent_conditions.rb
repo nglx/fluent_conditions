@@ -19,13 +19,27 @@ module FluentConditions
 
         builder.class_eval do
           define_method(field) do
-            add_boolean(field)
+            current_value = instance_variable_get(:@object).send(field)
+            add_boolean(current_value)
             self
           end
 
           define_method("#{field}?") do
-            add_boolean(field)
-            calculate
+            current_value = instance_variable_get(:@object).send(field)
+            add_boolean(current_value)
+            calculate_result
+          end
+
+          define_method("not_#{field}") do
+            current_value = !instance_variable_get(:@object).send(field)
+            add_boolean(current_value)
+            self
+          end
+
+          define_method("not_#{field}?") do
+            current_value = !instance_variable_get(:@object).send(field)
+            add_boolean(current_value)
+            calculate_result
           end
         end
       end
@@ -51,16 +65,16 @@ module FluentConditions
 
     private
 
-    def add_boolean(field)
+    def add_boolean(current_value)
       if @or_flag
-        @values[-1] = @values.last || @object.send(field)
+        @values[-1] = @values.last || current_value
         @or_flag = false
       else
-        @values << @object.send(field)
+        @values << current_value
       end
     end
 
-    def calculate
+    def calculate_result
       return true? if @type == :positive
       return false? if @type == :negative
     end

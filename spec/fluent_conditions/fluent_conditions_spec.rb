@@ -86,14 +86,23 @@ module FluentConditions
         @obj = clazz.new
       end
 
-      it "should check if true" do
-        @obj.admin = true
-        @obj.is.admin?.should be_true
+      it "should respond to added methods" do
+        @obj.is.should respond_to(:admin)
+        @obj.is.should respond_to(:admin?)
+        @obj.is.should respond_to(:not_admin)
+        @obj.is.should respond_to(:not_admin?)
       end
 
-      it "should check if false" do
+      it "should check for admin user if it's admin or not" do
+        @obj.admin = true
+        @obj.is.admin?.should be_true
+        @obj.is.not_admin?.should be_false
+      end
+
+      it "should check for non admin user if it's admin or not" do
         @obj.admin = false
         @obj.is.admin?.should be_false
+        @obj.is.not_admin?.should be_true
       end
 
       it "should treat nil as false value" do
