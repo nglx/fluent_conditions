@@ -14,26 +14,24 @@ module FluentConditions
     end
 
     base.instance_eval do
-      def fluent(*fields)
+      def fluent(field)
         builder = instance_variable_get(:@builder)
 
-        fields.each do |field|
-          builder.class_eval do
-            define_method(field) do
-              update_and_continue(instance_variable_get(:@object).send(field))
-            end
+        builder.class_eval do
+          define_method(field) do
+            update_and_continue(instance_variable_get(:@object).send(field))
+          end
 
-            define_method("#{field}?") do
-              update_and_finish(instance_variable_get(:@object).send(field))
-            end
+          define_method("#{field}?") do
+            update_and_finish(instance_variable_get(:@object).send(field))
+          end
 
-            define_method("not_#{field}") do
-              update_and_continue(!instance_variable_get(:@object).send(field))
-            end
+          define_method("not_#{field}") do
+            update_and_continue(!instance_variable_get(:@object).send(field))
+          end
 
-            define_method("not_#{field}?") do
-              update_and_finish(!instance_variable_get(:@object).send(field))
-            end
+          define_method("not_#{field}?") do
+            update_and_finish(!instance_variable_get(:@object).send(field))
           end
         end
       end
