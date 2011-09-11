@@ -205,7 +205,7 @@ module FluentConditions
       end
     end
 
-    describe "parametrized" do
+    describe "when values were defined" do
       before(:each) do
         clazz = Class.new do
           include FluentConditions
@@ -227,7 +227,7 @@ module FluentConditions
         @product.is.should respond_to(:not_green?)
       end
 
-      it "should check value by param" do
+      it "should check condition by value" do
         @product.color = :red
 
         @product.is.red?.should be_true
