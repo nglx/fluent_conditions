@@ -214,7 +214,7 @@ module FluentConditions
         clazz = Class.new do
           include FluentConditions
           attr_accessor :color
-          fluent_values :color, [:red, :green]
+          fluent :color, :values => [:red, :green]
         end
         @product = clazz.new
       end
