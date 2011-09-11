@@ -37,23 +37,44 @@ module FluentConditions
               end
             end
           end
-        end
+        elsif options.include?(:if)
+          field_name = options[:as]
+          condition_check = options[:if]
 
-        builder.class_eval do
-          define_method(field) do
-            update_and_continue(instance_variable_get(:@object).send(field))
+          builder.class_eval do
+            define_method(field_name) do
+              update_and_continue(condition_check.call(instance_variable_get(:@object).send(field)))
+            end
+
+            define_method("#{field_name}?") do
+              update_and_finish(condition_check.call(instance_variable_get(:@object).send(field)))
+            end
+            
+            define_method("not_#{field_name}") do
+              update_and_continue(!condition_check.call(instance_variable_get(:@object).send(field)))
+            end
+
+            define_method("not_#{field_name}?") do
+              update_and_finish(!condition_check.call(instance_variable_get(:@object).send(field)))
+            end
           end
+        else 
+          builder.class_eval do
+            define_method(field) do
+              update_and_continue(instance_variable_get(:@object).send(field))
+            end
 
-          define_method("#{field}?") do
-            update_and_finish(instance_variable_get(:@object).send(field))
-          end
+            define_method("#{field}?") do
+              update_and_finish(instance_variable_get(:@object).send(field))
+            end
 
-          define_method("not_#{field}") do
-            update_and_continue(!instance_variable_get(:@object).send(field))
-          end
+            define_method("not_#{field}") do
+              update_and_continue(!instance_variable_get(:@object).send(field))
+            end
 
-          define_method("not_#{field}?") do
-            update_and_finish(!instance_variable_get(:@object).send(field))
+            define_method("not_#{field}?") do
+              update_and_finish(!instance_variable_get(:@object).send(field))
+            end
           end
         end
       end

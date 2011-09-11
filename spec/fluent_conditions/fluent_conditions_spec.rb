@@ -243,6 +243,39 @@ module FluentConditions
         @product.is.not_green?.should be_true
       end
     end
+
+    describe "when condition check defined by user" do
+      before(:each) do
+        clazz = Class.new do
+          include FluentConditions
+          attr_accessor :length
+          fluent :length, :as => :long, :if => proc { |length| length >= 500 }
+          fluent :length, :as => :short, :if => proc { |length| length < 500 }
+        end
+        @post = clazz.new
+      end
+
+      it "should respond to new methods" do
+        @post.is.should respond_to(:long)
+        @post.is.should respond_to(:not_long)
+        @post.is.should respond_to(:long?)
+        @post.is.should respond_to(:not_long?)
+
+        @post.is.should respond_to(:short)
+        @post.is.should respond_to(:not_short)
+        @post.is.should respond_to(:short?)
+        @post.is.should respond_to(:not_short?)
+      end
+
+      it "should check condition defined by user" do
+        @post.length = 600
+
+        @post.is.long?.should be_true
+        @post.is.not_long?.should be_false
+        @post.is.short?.should be_false
+        @post.is.short.or.long?.should be_true
+      end
+    end
   end
 
 end
