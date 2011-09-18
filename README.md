@@ -11,7 +11,7 @@ Simplify your conditional expressions.
     class User
       include FluentConditions
 
-      attr_accessor :admin, logged_in
+      attr_accessor :admin, :logged_in
 
       fluent :admin
       fluent :logged_in
