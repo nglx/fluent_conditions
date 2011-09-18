@@ -121,7 +121,7 @@ module FluentConditions
         @current = @current || field_value
         @or_flag = false
       else
-        @previous, @current = @current, field_value
+        @previous, @current = @previous && @current, field_value
       end
     end
 

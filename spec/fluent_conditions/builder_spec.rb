@@ -121,14 +121,20 @@ module FluentConditions
         @obj.bad = false
         @obj.ugly = true
 
+        @obj.is.good.bad.ugly?.should be_false
+        @obj.is.good.ugly.bad?.should be_false
         @obj.is.good.bad.or.ugly?.should be_true
         @obj.is.good.or.bad.and.ugly?.should be_true
         @obj.is.good.ugly.or.bad?.should be_true
 
+        @obj.is.bad.good.ugly?.should be_false
+        @obj.is.bad.ugly.good?.should be_false
         @obj.is.bad.and.good.or.ugly?.should be_false
         @obj.is.bad.ugly.or.good?.should be_false
         @obj.is.bad.or.good.and.ugly?.should be_true
 
+        @obj.is.ugly.good.bad?.should be_false
+        @obj.is.ugly.bad.good?.should be_false
         @obj.is.ugly.or.good.and.bad?.should be_false
         @obj.is.ugly.good.and.bad?.should be_false
         @obj.is.ugly.good.or.bad?.should be_true
