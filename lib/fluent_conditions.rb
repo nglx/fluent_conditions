@@ -92,11 +92,18 @@ module FluentConditions
     def initialize(object, type)
       @object = object
       @type = type
-      @previous, @current = true, true
+      @previous, @current, @big_or = true, true, false
     end
 
     def or
       @or_flag = true
+      self
+    end
+
+    def OR
+      @big_or = @big_or || result
+      @big_or_flag = true
+      @previous, @current = true, true
       self
     end
 
@@ -126,6 +133,10 @@ module FluentConditions
     end
 
     def end_result
+      if @big_or_flag
+        return (@big_or || result) if @type == :positive
+        return !(@big_or || result) if @type == :negative
+      end
       return result if @type == :positive
       return !result if @type == :negative
     end

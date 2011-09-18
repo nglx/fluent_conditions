@@ -210,6 +210,31 @@ module FluentConditions
         @post.is.short.or.long?.should be_true
       end
     end
+
+    describe "when big OR used" do
+      before(:each) do
+        clazz = Class.new do
+          include FluentConditions
+          attr_accessor :name, :color
+          fluent :name, :values => [:apple, :grass, :sky]
+          fluent :color, :values => [:red, :green, :blue]
+        end
+        @thing = clazz.new
+      end
+
+      it "should check conditions with OR" do
+        @thing.name = :apple
+        @thing.color = :red
+
+        @thing.is.green.grass.OR.red.apple?.should be_true
+        @thing.is.red.apple.OR.green.grass?.should be_true
+        @thing.is.blue.sky.OR.green.grass?.should be_false
+
+        @thing.is_not.red.apple.OR.green.grass?.should be_false
+        @thing.is_not.red.apple.OR.green.grass?.should be_false
+        @thing.is_not.blue.sky.OR.green.grass?.should be_true
+      end
+    end
   end
 
 end
